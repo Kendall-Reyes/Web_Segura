@@ -26,6 +26,6 @@ coverage/
 .vscode/
 .idea/
 
-# Archivos de base de datos locales (por si usas dumps)
-*.sql
+# Dumps de base de datos (backups locales)
 *.dump
+*.sql.bak
