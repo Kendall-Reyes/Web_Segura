@@ -1,0 +1,19 @@
+# Services: se definen los servicios o contenedores que tendrá el proyecto.
+services:
+  db:
+    image: postgres:16
+    #Nombre fijo del contenedor de la BD.
+    container_name: web_segura_bd 
+    #Hace que el contenedor se reinicie automáticamente si se cae.
+    restart: unless-stopped 
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: web_seguro
+    ports:
+      - "5432:5432"
+    volumes:
+        #Guarda los datos aunque el contenedor se apague o se borre.
+      - postgres_data:/var/lib/postgresql/data 
+        #Le indica a docker que ejecute automáticamente el "schema.sql"
+      - ./backend/src/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
