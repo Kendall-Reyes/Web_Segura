@@ -17,3 +17,20 @@ services:
       - postgres_data:/var/lib/postgresql/data 
         #Le indica a docker que ejecute automáticamente el "schema.sql"
       - ./backend/src/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+backend:
+  # Docker construye el backend usando el "DockerFile"
+  build: ./backend
+  # Nombre fijo del contenedor de la BD.
+  container_name: web_segura_backend
+  # Hace que el contenedor se reinicie automáticamente si se cae.
+  restart: unless-stopped
+  # Expone el API
+  ports:
+    - "3000:3000"
+  # Conecta el backend con Postgres
+  env_file:
+    - ./backend/.env
+  # El backend depende de la BD
+  depends_on:
+    - db
