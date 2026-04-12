@@ -54,4 +54,4 @@ frontend:
 
 volumes:
   # Define que sea una almacenamiento persistente. Hace que no se borre la BD. 
-  - postgres_data
+  postgres_data: 
