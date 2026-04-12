@@ -19,7 +19,7 @@
 | swagger-ui-express 	| 5.0.1   	| Genera la documentación interactiva de los endpoints de la API disponible en /api/docs                                                                               	| Ninguna conocida actualmente                                           	| —                                                                                                                      	|
 | yamljs             	| 0.3.0   	| Lee los archivos de configuración de Swagger en formato YAML                                                                                                         	| CVE-2016-10540 — denegación de servicio al parsear entradas maliciosas 	| El archivo YAML lo genera el equipo de desarrollo, nunca proviene de input del usuario, eliminando el vector de ataque 	|
 | nodemon (dev)      	| 3.1.14  	| Reinicia automáticamente el servidor al detectar cambios en el código durante el desarrollo                                                                          	| glob@7.2.3 deprecado internamente — fuga de memoria potencial          	| Es una dependencia exclusiva de desarrollo. No se incluye en el contenedor de producción ni en el servidor público     	|
-
+| zod                               | 4.3.6     | Librería de validación de esquemas en backend. Se utiliza para validar y sanear datos de entrada (body, params, query), evitar lógica de validación duplicada y asegurar que solo datos estructuralmente válidos lleguen a la capa de negocio. Mejora la mantenibilidad y reduce riesgos asociados a inputs malformados. | Versiones anteriores (< 3.22.3) presentaron vulnerabilidad de denegación de servicio (CVE-2023-4316). Versiones actuales 4.3.6 no presentan vulnerabilidades conocidas |
 
 
 ### Frontend
