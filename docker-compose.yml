@@ -34,3 +34,21 @@ backend:
   # El backend depende de la BD
   depends_on:
     - db
+
+frontend:
+  # Docker construye el frontend usando el "DockerFile"
+  build: ./frontend
+  # Nombre del contenedor del frontend
+  container_name: web_segura_frontend
+  # Reinicio automático
+  restart: unless-stopped
+  # Acceso al sistema
+  ports:
+    - "5173:5173"
+  # Acceso a las variables 
+  env_file:
+    - ./frontend/.env
+  # El frontend depende del backend
+  depends_on:
+    - backend
+
