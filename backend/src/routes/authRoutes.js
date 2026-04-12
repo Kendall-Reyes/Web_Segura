@@ -1,16 +1,14 @@
 const express = require('express')
 const router = express.Router()
 const { loginLimiter } = require('../middlewares/rateLimiter')
-// const { login, logout } = require('../controllers/authController')
+const validate = require('../validators/validate')
+const { loginSchema } = require('../validators/authValidator')
+const { login, logout } = require('../controllers/authController')
 
 // POST /api/auth/login
-router.post('/login', loginLimiter, (req, res) => {
-    res.json({ message: 'Login - pendiente implementación' })
-})
+router.post('/login', loginLimiter, validate(loginSchema), login)
 
 // POST /api/auth/logout
-router.post('/logout', (req, res) => {
-    res.json({ message: 'Logout - pendiente implementación' })
-})
+router.post('/logout', logout)
 
 module.exports = router
