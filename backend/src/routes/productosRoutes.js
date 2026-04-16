@@ -1,13 +1,16 @@
 const express = require('express')
 const router = express.Router()
+
 const { verificarToken } = require('../middlewares/auth')
-const { soloSuperAdmin } = require('../middlewares/roles')
+const { permitirRoles } = require('../middlewares/roles')
 const validate = require('../validators/validate')
+
 const {
   createProductoSchema,
   updateProductoSchema,
   productoIdParamSchema
 } = require('../validators/productosValidator')
+
 const {
   listar,
   obtener,
@@ -17,25 +20,48 @@ const {
 } = require('../controllers/productosController')
 
 // GET /api/productos
-router.get('/', verificarToken, listar)
+router.get(
+  '/',
+  verificarToken,
+  permitirRoles('SuperAdmin', 'Auditor', 'Registrador'),
+  listar
+)
 
 // GET /api/productos/:id
-router.get('/:id', verificarToken, validate(productoIdParamSchema, 'params'), obtener)
+router.get(
+  '/:id',
+  verificarToken,
+  permitirRoles('SuperAdmin', 'Auditor', 'Registrador'),
+  validate(productoIdParamSchema, 'params'),
+  obtener
+)
 
 // POST /api/productos
-router.post('/', verificarToken, soloSuperAdmin, validate(createProductoSchema), crear)
+router.post(
+  '/',
+  verificarToken,
+  permitirRoles('SuperAdmin', 'Registrador'),
+  validate(createProductoSchema),
+  crear
+)
 
 // PUT /api/productos/:id
 router.put(
   '/:id',
   verificarToken,
-  soloSuperAdmin,
+  permitirRoles('SuperAdmin', 'Registrador'),
   validate(productoIdParamSchema, 'params'),
   validate(updateProductoSchema),
   actualizar
 )
 
 // DELETE /api/productos/:id
-router.delete('/:id', verificarToken, soloSuperAdmin, validate(productoIdParamSchema, 'params'), eliminar)
+router.delete(
+  '/:id',
+  verificarToken,
+  permitirRoles('SuperAdmin', 'Registrador'),
+  validate(productoIdParamSchema, 'params'),
+  eliminar
+)
 
 module.exports = router

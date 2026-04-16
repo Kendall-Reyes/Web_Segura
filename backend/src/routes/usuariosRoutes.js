@@ -1,13 +1,16 @@
 const express = require('express')
 const router = express.Router()
+
 const { verificarToken } = require('../middlewares/auth')
-const { soloSuperAdmin } = require('../middlewares/roles')
+const { permitirRoles } = require('../middlewares/roles')
 const validate = require('../validators/validate')
+
 const {
   createUsuarioSchema,
   updateUsuarioSchema,
   usuarioIdParamSchema
 } = require('../validators/usuariosValidator')
+
 const {
   listar,
   obtener,
@@ -16,21 +19,49 @@ const {
   eliminar
 } = require('../controllers/usuariosController')
 
-router.get('/', verificarToken, soloSuperAdmin, listar)
+// GET /api/usuarios
+router.get(
+  '/',
+  verificarToken,
+  permitirRoles('SuperAdmin', 'Auditor', 'Registrador'),
+  listar
+)
 
-router.get('/:id', verificarToken, soloSuperAdmin, validate(usuarioIdParamSchema, 'params'), obtener)
+// GET /api/usuarios/:id
+router.get(
+  '/:id',
+  verificarToken,
+  permitirRoles('SuperAdmin'),
+  validate(usuarioIdParamSchema, 'params'),
+  obtener
+)
 
-router.post('/', verificarToken, soloSuperAdmin, validate(createUsuarioSchema), crear)
+// POST /api/usuarios
+router.post(
+  '/',
+  verificarToken,
+  permitirRoles('SuperAdmin'),
+  validate(createUsuarioSchema),
+  crear
+)
 
+// PUT /api/usuarios/:id
 router.put(
   '/:id',
   verificarToken,
-  soloSuperAdmin,
+  permitirRoles('SuperAdmin'),
   validate(usuarioIdParamSchema, 'params'),
   validate(updateUsuarioSchema),
   actualizar
 )
 
-router.delete('/:id', verificarToken, soloSuperAdmin, validate(usuarioIdParamSchema, 'params'), eliminar)
+// DELETE /api/usuarios/:id
+router.delete(
+  '/:id',
+  verificarToken,
+  permitirRoles('SuperAdmin'),
+  validate(usuarioIdParamSchema, 'params'),
+  eliminar
+)
 
 module.exports = router
