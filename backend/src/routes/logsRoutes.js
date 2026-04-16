@@ -2,10 +2,11 @@ const express = require('express')
 const router = express.Router()
 const { verificarToken } = require('../middlewares/auth')
 const { soloSuperAdmin } = require('../middlewares/roles')
+const { listarLogs } = require('../controllers/logsController')
 
-// GET /api/logs
-router.get('/', verificarToken, soloSuperAdmin, (req, res) => {
-    res.json({ message: 'Ver logs - pendiente' })
-})
+/**
+ * Lista los logs del sistema.
+ */
+router.get('/', verificarToken, soloSuperAdmin, listarLogs)
 
 module.exports = router
