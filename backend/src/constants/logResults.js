@@ -1,0 +1,5 @@
+module.exports = {
+  EXITOSO: 'EXITOSO',
+  FALLIDO: 'FALLIDO',
+  NO_ENCONTRADO: 'NO_ENCONTRADO'
+}

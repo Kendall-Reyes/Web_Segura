@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken')
 const authService = require('../services/authService')
+const logService = require('../services/logService')
+const { EXITOSO, FALLIDO } = require('../constants/logResults')
 
 /**
  * Autentica un usuario con credenciales previamente validadas.
@@ -34,11 +36,26 @@ const login = async (req, res, next) => {
       maxAge: 60 * 60 * 1000
     })
 
+    await logService.registrarLog({
+      usuarioId: user.id,
+      accion: 'LOGIN',
+      detalle: `Inicio de sesión exitoso para el usuario ${user.nombre}`,
+      ipOrigen: req.ip,
+      resultado: EXITOSO
+    })
+
     return res.status(200).json({
       ok: true,
       message: 'Login exitoso'
     })
   } catch (error) {
+    await logService.registrarLog({
+      accion: 'LOGIN',
+      detalle: `Intento fallido de inicio de sesión para el usuario ${req.validatedData?.body?.nombre || 'desconocido'}`,
+      ipOrigen: req.ip,
+      resultado: FALLIDO
+    })
+
     return res.status(401).json({
       ok: false,
       message: 'Credenciales inválidas'
@@ -63,11 +80,27 @@ const logout = async (req, res, next) => {
       sameSite: 'strict'
     })
 
+    await logService.registrarLog({
+      usuarioId: req.user?.id || null,
+      accion: 'LOGOUT',
+      detalle: `Cierre de sesión del usuario ${req.user?.nombre || 'desconocido'}`,
+      ipOrigen: req.ip,
+      resultado: EXITOSO
+    })
+
     return res.status(200).json({
       ok: true,
       message: 'Logout exitoso'
     })
   } catch (error) {
+    await logService.registrarLog({
+      usuarioId: req.user?.id || null,
+      accion: 'LOGOUT',
+      detalle: `Error durante el cierre de sesión: ${error.message}`,
+      ipOrigen: req.ip,
+      resultado: FALLIDO
+    })
+
     next(error)
   }
 }

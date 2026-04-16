@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const logService = require('../services/logService')
 
 /**
  * Verifica un JWT válido desde cookie HttpOnly o header Authorization.
@@ -6,9 +7,9 @@ const jwt = require('jsonwebtoken')
  * @param {import('express').Request} req Solicitud HTTP.
  * @param {import('express').Response} res Respuesta HTTP.
  * @param {import('express').NextFunction} next Middleware siguiente.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-const verificarToken = (req, res, next) => {
+const verificarToken = async (req, res, next) => {
   try {
     const tokenFromCookie = req.cookies?.token
     const authHeader = req.headers.authorization
@@ -22,6 +23,13 @@ const verificarToken = (req, res, next) => {
     }
 
     if (!token) {
+      await logService.registrarLog({
+        accion: 'ACCESO',
+        detalle: `Acceso sin token a la ruta ${req.originalUrl}`,
+        ipOrigen: req.ip,
+        resultado: 'NO_AUTORIZADO'
+      })
+
       return res.status(401).json({
         ok: false,
         message: 'No autorizado - token requerido'
@@ -33,6 +41,13 @@ const verificarToken = (req, res, next) => {
 
     next()
   } catch (error) {
+    await logService.registrarLog({
+      accion: 'ACCESO',
+      detalle: `Token inválido o expirado al acceder a la ruta ${req.originalUrl}`,
+      ipOrigen: req.ip,
+      resultado: 'TOKEN_INVALIDO'
+    })
+
     return res.status(401).json({
       ok: false,
       message: 'Token inválido o expirado'
