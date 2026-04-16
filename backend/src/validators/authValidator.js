@@ -4,11 +4,11 @@ const { z } = require('zod')
  * Esquema para validar credenciales de inicio de sesión.
  */
 const loginSchema = z.object({
-  username: z
-    .string({ message: 'El username es obligatorio' })
+  nombre: z
+    .string({ message: 'El nombre es obligatorio' })
     .trim()
-    .min(3, 'El username debe tener al menos 3 caracteres')
-    .max(50, 'El username no puede exceder 50 caracteres'),
+    .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .max(50, 'El nombre no puede exceder 50 caracteres'),
 
   password: z
     .string({ message: 'La contraseña es obligatoria' })
