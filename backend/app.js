@@ -8,6 +8,7 @@ const authRoutes = require('./src/routes/authRoutes')
 const productosRoutes = require('./src/routes/productosRoutes')
 const usuariosRoutes = require('./src/routes/usuariosRoutes')
 const logsRoutes = require('./src/routes/logsRoutes')
+const rolesRoutes = require('./src/routes/rolesRoutes')
 
 const app = express()
 
@@ -27,6 +28,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/productos', productosRoutes)
 app.use('/api/usuarios', usuariosRoutes)
 app.use('/api/logs', logsRoutes)
+app.use('/api/roles', rolesRoutes)
 
 // Manejo global de errores
 app.use(errorHandler)
