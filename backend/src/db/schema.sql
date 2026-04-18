@@ -4,7 +4,6 @@ create table if not exists usuarios (
    nombre       varchar(100) not null,
    email        varchar(150) unique not null,
    contrasena   varchar(255) not null,
-   rol          varchar(50) not null default 'usuario',
    ultimo_login timestamp,
    rol_id       integer    references roles(id)
 );
