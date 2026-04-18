@@ -5,7 +5,8 @@ create table if not exists usuarios (
    email        varchar(150) unique not null,
    contrasena   varchar(255) not null,
    rol          varchar(50) not null default 'usuario',
-   ultimo_login timestamp
+   ultimo_login timestamp,
+   rol_id       integer    references roles(id)
 );
 
 -- Tabla productos para docker-compose
@@ -28,4 +29,9 @@ create table if not exists log_auditoria (
    detalle    text,
    ip_origen  varchar(45),
    resultado  varchar(20)
+);
+
+create table if not exists roles (
+   id serial primary key,
+   role varchar(50) unique not null
 );
