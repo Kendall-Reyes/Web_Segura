@@ -33,7 +33,7 @@ const obtenerPorId = async (id) => {
 }
 
 /**
- * Obtiene un rol por su nombre.
+ * Obtiene un rol por su nombre sin importar mayúsculas/minúsculas.
  * @param {string} role Nombre del rol.
  * @returns {Promise<{id:number, role:string} | null>}
  */
@@ -50,12 +50,14 @@ const obtenerPorNombre = async (role) => {
 }
 
 /**
- * Crea un nuevo rol.
+ * Crea un nuevo rol normalizando su nombre a minúscula.
  * @param {{role:string}} data Datos del rol.
  * @returns {Promise<{id:number, role:string}>}
  */
 const crear = async ({ role }) => {
-  const existente = await obtenerPorNombre(role)
+  const roleNormalizado = role.trim().toLowerCase()
+
+  const existente = await obtenerPorNombre(roleNormalizado)
 
   if (existente) {
     const error = new Error('El rol ya existe')
@@ -69,12 +71,12 @@ const crear = async ({ role }) => {
     RETURNING id, role
   `
 
-  const result = await pool.query(query, [role])
+  const result = await pool.query(query, [roleNormalizado])
   return result.rows[0]
 }
 
 /**
- * Actualiza un rol existente.
+ * Actualiza un rol existente normalizando el nombre si fue enviado.
  * @param {number} id Id del rol.
  * @param {{role?:string}} data Datos a actualizar.
  * @returns {Promise<{id:number, role:string} | null>}
@@ -86,8 +88,12 @@ const actualizar = async (id, { role }) => {
     return null
   }
 
+  let roleNormalizado = null
+
   if (role) {
-    const rolDuplicado = await obtenerPorNombre(role)
+    roleNormalizado = role.trim().toLowerCase()
+
+    const rolDuplicado = await obtenerPorNombre(roleNormalizado)
 
     if (rolDuplicado && rolDuplicado.id !== id) {
       const error = new Error('Ya existe otro rol con ese nombre')
@@ -103,7 +109,7 @@ const actualizar = async (id, { role }) => {
     RETURNING id, role
   `
 
-  const result = await pool.query(query, [id, role ?? null])
+  const result = await pool.query(query, [id, roleNormalizado])
   return result.rows[0] || null
 }
 
