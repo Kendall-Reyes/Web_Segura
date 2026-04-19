@@ -1,8 +1,9 @@
+const productosService = require('../services/productosService')
 const logService = require('../services/logService')
 const { EXITOSO, FALLIDO, NO_ENCONTRADO } = require('../constants/logResults')
 
 /**
- * Lista los productos disponibles.
+ * Lista todos los productos disponibles.
  * @param {import('express').Request} req Solicitud HTTP.
  * @param {import('express').Response} res Respuesta HTTP.
  * @param {import('express').NextFunction} next Middleware siguiente.
@@ -10,18 +11,20 @@ const { EXITOSO, FALLIDO, NO_ENCONTRADO } = require('../constants/logResults')
  */
 const listar = async (req, res, next) => {
   try {
+    const productos = await productosService.listar()
+
     await logService.registrarLog({
       usuarioId: req.user?.id || null,
       accion: 'LISTAR_PRODUCTOS',
-      detalle: `Listado de productos consultado por el usuario ${req.user?.nombre || 'desconocido'}`,
+      detalle: `Listado de productos consultado por ${req.user?.nombre || 'desconocido'}`,
       ipOrigen: req.ip,
       resultado: EXITOSO
     })
 
     return res.status(200).json({
       ok: true,
-      message: 'Listar productos - pendiente implementación',
-      data: []
+      message: 'Listado de productos obtenido correctamente',
+      data: productos
     })
   } catch (error) {
     await logService.registrarLog({
@@ -45,16 +48,14 @@ const listar = async (req, res, next) => {
  */
 const obtener = async (req, res, next) => {
   try {
-    const params = req.validatedData?.params
-
-    // Temporal hasta conectar BD real
-    const producto = null
+    const { id } = req.validatedData.params
+    const producto = await productosService.obtenerPorId(id)
 
     if (!producto) {
       await logService.registrarLog({
         usuarioId: req.user?.id || null,
         accion: 'OBTENER_PRODUCTO',
-        detalle: `Producto con id ${params.id} no encontrado`,
+        detalle: `Producto con id ${id} no encontrado`,
         ipOrigen: req.ip,
         resultado: NO_ENCONTRADO
       })
@@ -68,7 +69,7 @@ const obtener = async (req, res, next) => {
     await logService.registrarLog({
       usuarioId: req.user?.id || null,
       accion: 'OBTENER_PRODUCTO',
-      detalle: `Consulta del producto con id ${params.id} por el usuario ${req.user?.nombre || 'desconocido'}`,
+      detalle: `Consulta del producto con id ${id}`,
       ipOrigen: req.ip,
       resultado: EXITOSO
     })
@@ -92,7 +93,7 @@ const obtener = async (req, res, next) => {
 }
 
 /**
- * Crea un producto con datos validados.
+ * Crea un producto nuevo.
  * @param {import('express').Request} req Solicitud HTTP.
  * @param {import('express').Response} res Respuesta HTTP.
  * @param {import('express').NextFunction} next Middleware siguiente.
@@ -100,20 +101,21 @@ const obtener = async (req, res, next) => {
  */
 const crear = async (req, res, next) => {
   try {
-    const data = req.validatedData?.body
+    const data = req.validatedData.body
+    const producto = await productosService.crear(data)
 
     await logService.registrarLog({
       usuarioId: req.user?.id || null,
       accion: 'CREAR_PRODUCTO',
-      detalle: `Creación de producto con código ${data.codigo} por el usuario ${req.user?.nombre || 'desconocido'}`,
+      detalle: `Creación del producto con código ${producto.codigo}`,
       ipOrigen: req.ip,
       resultado: EXITOSO
     })
 
     return res.status(201).json({
       ok: true,
-      message: 'Crear producto - pendiente implementación',
-      data
+      message: 'Producto creado correctamente',
+      data: producto
     })
   } catch (error) {
     await logService.registrarLog({
@@ -124,7 +126,10 @@ const crear = async (req, res, next) => {
       resultado: FALLIDO
     })
 
-    next(error)
+    return res.status(error.statusCode || 500).json({
+      ok: false,
+      message: error.message || 'Error al crear producto'
+    })
   }
 }
 
@@ -137,17 +142,16 @@ const crear = async (req, res, next) => {
  */
 const actualizar = async (req, res, next) => {
   try {
-    const params = req.validatedData?.params
-    const data = req.validatedData?.body
+    const { id } = req.validatedData.params
+    const data = req.validatedData.body
 
-    // Temporal hasta conectar BD real
-    const productoExiste = false
+    const producto = await productosService.actualizar(id, data)
 
-    if (!productoExiste) {
+    if (!producto) {
       await logService.registrarLog({
         usuarioId: req.user?.id || null,
         accion: 'ACTUALIZAR_PRODUCTO',
-        detalle: `Producto con id ${params.id} no encontrado para actualización`,
+        detalle: `Producto con id ${id} no encontrado para actualización`,
         ipOrigen: req.ip,
         resultado: NO_ENCONTRADO
       })
@@ -161,7 +165,7 @@ const actualizar = async (req, res, next) => {
     await logService.registrarLog({
       usuarioId: req.user?.id || null,
       accion: 'ACTUALIZAR_PRODUCTO',
-      detalle: `Actualización del producto con id ${params.id} por el usuario ${req.user?.nombre || 'desconocido'}. Cambios: ${JSON.stringify(data)}`,
+      detalle: `Producto con id ${id} actualizado`,
       ipOrigen: req.ip,
       resultado: EXITOSO
     })
@@ -169,10 +173,7 @@ const actualizar = async (req, res, next) => {
     return res.status(200).json({
       ok: true,
       message: 'Producto actualizado correctamente',
-      data: {
-        id: params.id,
-        cambios: data
-      }
+      data: producto
     })
   } catch (error) {
     await logService.registrarLog({
@@ -183,12 +184,15 @@ const actualizar = async (req, res, next) => {
       resultado: FALLIDO
     })
 
-    next(error)
+    return res.status(error.statusCode || 500).json({
+      ok: false,
+      message: error.message || 'Error al actualizar producto'
+    })
   }
 }
 
 /**
- * Elimina un producto por su identificador.
+ * Elimina un producto existente.
  * @param {import('express').Request} req Solicitud HTTP.
  * @param {import('express').Response} res Respuesta HTTP.
  * @param {import('express').NextFunction} next Middleware siguiente.
@@ -196,16 +200,14 @@ const actualizar = async (req, res, next) => {
  */
 const eliminar = async (req, res, next) => {
   try {
-    const params = req.validatedData?.params
+    const { id } = req.validatedData.params
+    const eliminado = await productosService.eliminar(id)
 
-    // Temporal hasta conectar BD real
-    const productoExiste = false
-
-    if (!productoExiste) {
+    if (!eliminado) {
       await logService.registrarLog({
         usuarioId: req.user?.id || null,
         accion: 'ELIMINAR_PRODUCTO',
-        detalle: `Producto con id ${params.id} no encontrado para eliminación`,
+        detalle: `Producto con id ${id} no encontrado para eliminación`,
         ipOrigen: req.ip,
         resultado: NO_ENCONTRADO
       })
@@ -219,17 +221,14 @@ const eliminar = async (req, res, next) => {
     await logService.registrarLog({
       usuarioId: req.user?.id || null,
       accion: 'ELIMINAR_PRODUCTO',
-      detalle: `Eliminación del producto con id ${params.id} por el usuario ${req.user?.nombre || 'desconocido'}`,
+      detalle: `Producto con id ${id} eliminado`,
       ipOrigen: req.ip,
       resultado: EXITOSO
     })
 
     return res.status(200).json({
       ok: true,
-      message: 'Producto eliminado correctamente',
-      data: {
-        id: params.id
-      }
+      message: 'Producto eliminado correctamente'
     })
   } catch (error) {
     await logService.registrarLog({
