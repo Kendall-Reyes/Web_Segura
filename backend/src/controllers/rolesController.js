@@ -126,10 +126,7 @@ const crear = async (req, res, next) => {
       resultado: FALLIDO
     })
 
-    return res.status(error.statusCode || 500).json({
-      ok: false,
-      message: error.message || 'Error al crear rol'
-    })
+    next(error)
   }
 }
 
@@ -184,10 +181,7 @@ const actualizar = async (req, res, next) => {
       resultado: FALLIDO
     })
 
-    return res.status(error.statusCode || 500).json({
-      ok: false,
-      message: error.message || 'Error al actualizar rol'
-    })
+    next(error)
   }
 }
 
