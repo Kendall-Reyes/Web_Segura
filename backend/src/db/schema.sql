@@ -4,6 +4,9 @@ create table if not exists roles (
    role varchar(50) unique not null
 );
 
+-- Insertar el rol superadmin
+insert into roles (role) values ('superadmin') on conflict (role) do nothing;
+
 -- Tabla usuarios para docker-compose
 create table if not exists usuarios (
    id           serial primary key,
@@ -13,6 +16,16 @@ create table if not exists usuarios (
    ultimo_login timestamp,
    rol_id       integer    references roles(id)
 );
+
+-- Insertar super usuario inicial
+insert into usuarios (nombre, email, contrasena, rol_id)
+   values(
+      'Jose David Carvajal',
+      'jodacarvajal@gmail.com',
+      '$2b$12$RGjazohWwAOLVtOyioWFK.i8DS7IAl7FcuHiijGIq39Urvz7TP6NC', -- Contraseña: 123456
+      (select id from roles where role = 'superadmin')
+   )
+   on conflict (email) do nothing;
 
 -- Tabla productos para docker-compose
 create table if not exists productos (
