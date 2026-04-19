@@ -4,17 +4,11 @@ const { z } = require('zod')
  * Esquema para crear un usuario.
  */
 const createUsuarioSchema = z.object({
-  username: z
-    .string({ message: 'El username es obligatorio' })
+  nombre: z
+    .string({ message: 'El nombre es obligatorio' })
     .trim()
-    .min(3, 'El username debe tener al menos 3 caracteres')
-    .max(50, 'El username no puede exceder 50 caracteres')
-    .regex(/^[a-zA-Z0-9_.-]+$/, 'El username contiene caracteres no permitidos'),
-
-  password: z
-    .string({ message: 'La contraseña es obligatoria' })
-    .min(8, 'La contraseña debe tener al menos 8 caracteres')
-    .max(72, 'La contraseña no puede exceder 72 caracteres'),
+    .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .max(100, 'El nombre no puede exceder 100 caracteres'),
 
   email: z
     .string({ message: 'El email es obligatorio' })
@@ -22,7 +16,12 @@ const createUsuarioSchema = z.object({
     .email('El email no es válido')
     .max(150, 'El email no puede exceder 150 caracteres'),
 
-  rolId: z
+  password: z
+    .string({ message: 'La contraseña es obligatoria' })
+    .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    .max(72, 'La contraseña no puede exceder 72 caracteres'),
+
+  rolId: z.coerce
     .number({ message: 'El rol es obligatorio' })
     .int('El rol debe ser un entero')
     .positive('El rol debe ser mayor que cero')
@@ -32,18 +31,11 @@ const createUsuarioSchema = z.object({
  * Esquema para actualizar un usuario.
  */
 const updateUsuarioSchema = z.object({
-  username: z
+  nombre: z
     .string()
     .trim()
-    .min(3, 'El username debe tener al menos 3 caracteres')
-    .max(50, 'El username no puede exceder 50 caracteres')
-    .regex(/^[a-zA-Z0-9_.-]+$/, 'El username contiene caracteres no permitidos')
-    .optional(),
-
-  password: z
-    .string()
-    .min(8, 'La contraseña debe tener al menos 8 caracteres')
-    .max(72, 'La contraseña no puede exceder 72 caracteres')
+    .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .max(100, 'El nombre no puede exceder 100 caracteres')
     .optional(),
 
   email: z
@@ -53,7 +45,13 @@ const updateUsuarioSchema = z.object({
     .max(150, 'El email no puede exceder 150 caracteres')
     .optional(),
 
-  rolId: z
+  password: z
+    .string()
+    .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    .max(72, 'La contraseña no puede exceder 72 caracteres')
+    .optional(),
+
+  rolId: z.coerce
     .number()
     .int('El rol debe ser un entero')
     .positive('El rol debe ser mayor que cero')
@@ -63,7 +61,7 @@ const updateUsuarioSchema = z.object({
 })
 
 /**
- * Esquema para validar el parámetro id de usuario.
+ * Esquema para validar el id del usuario.
  */
 const usuarioIdParamSchema = z.object({
   id: z.coerce
