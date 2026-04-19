@@ -7,12 +7,10 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import Usuarios from "./pages/user/Usuarios";
 import CreateUser from "./pages/user/CreateUser";
 import EditUser from "./pages/user/EditUser";
-
 import Logs from "./pages/Logs";
-
 import Roles from "./pages/roles/roles";
-
 import Productos from "./pages/productos/Productos";
+import AuthPage from "./pages/AuthPage";
 
 // páginas
 const Home = () => <h1>Inicio</h1>;
@@ -22,7 +20,7 @@ const Home = () => <h1>Inicio</h1>;
 //const Logs = () => <h1>Logs</h1>;
 const Reportes = () => <h1>Reportes</h1>;
 
-function App() {
+/*function App() {
   const [user, setUser] = useState({
     nombre: "Kendall",
     rol: "SuperAdmin",
@@ -99,11 +97,11 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
-}
+}*/
 
-export default App;
 
-/*import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthPage from "./pages/AuthPage";
 
 function App() {
@@ -116,4 +114,4 @@ function App() {
   );
 }
 
-export default App;*/
+export default App;
