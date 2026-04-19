@@ -10,7 +10,7 @@ import EditUser from "./pages/user/EditUser";
 
 import Logs from "./pages/Logs";
 
-import Roles from "./pages/roles/Roles";
+import Roles from "./pages/roles/roles";
 
 import Productos from "./pages/productos/Productos";
 
