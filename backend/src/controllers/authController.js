@@ -51,7 +51,7 @@ const login = async (req, res, next) => {
   } catch (error) {
     await logService.registrarLog({
       accion: 'LOGIN',
-      detalle: `Intento fallido de inicio de sesión para el usuario ${req.validatedData?.body?.nombre || 'desconocido'}`,
+      detalle: `Intento fallido de inicio de sesión para el email ${req.validatedData?.body?.email || 'desconocido'}`,
       ipOrigen: req.ip,
       resultado: FALLIDO
     })
