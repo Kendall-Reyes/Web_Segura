@@ -1,3 +1,9 @@
+-- Tabla roles para docker-compose
+create table if not exists roles (
+   id serial primary key,
+   role varchar(50) unique not null
+);
+
 -- Tabla usuarios para docker-compose
 create table if not exists usuarios (
    id           serial primary key,
@@ -28,9 +34,4 @@ create table if not exists log_auditoria (
    detalle    text,
    ip_origen  varchar(45),
    resultado  varchar(20)
-);
-
-create table if not exists roles (
-   id serial primary key,
-   role varchar(50) unique not null
 );
