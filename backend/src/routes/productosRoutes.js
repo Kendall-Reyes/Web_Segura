@@ -23,7 +23,7 @@ const {
 router.get(
   '/',
   verificarToken,
-  permitirRoles('SuperAdmin', 'Auditor', 'Registrador'),
+  permitirRoles('Auditor', 'Registrador'),
   listar
 )
 
@@ -31,7 +31,7 @@ router.get(
 router.get(
   '/:id',
   verificarToken,
-  permitirRoles('SuperAdmin', 'Auditor', 'Registrador'),
+  permitirRoles('Registrador'),
   validate(productoIdParamSchema, 'params'),
   obtener
 )
@@ -40,7 +40,7 @@ router.get(
 router.post(
   '/',
   verificarToken,
-  permitirRoles('SuperAdmin', 'Registrador'),
+  permitirRoles('Registrador'),
   validate(createProductoSchema),
   crear
 )
@@ -49,7 +49,7 @@ router.post(
 router.put(
   '/:id',
   verificarToken,
-  permitirRoles('SuperAdmin', 'Registrador'),
+  permitirRoles('Registrador'),
   validate(productoIdParamSchema, 'params'),
   validate(updateProductoSchema),
   actualizar
@@ -59,7 +59,7 @@ router.put(
 router.delete(
   '/:id',
   verificarToken,
-  permitirRoles('SuperAdmin', 'Registrador'),
+  permitirRoles('Registrador'),
   validate(productoIdParamSchema, 'params'),
   eliminar
 )
