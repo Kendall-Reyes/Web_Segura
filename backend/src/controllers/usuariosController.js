@@ -1,3 +1,4 @@
+const usuariosService = require('../services/usuariosService')
 const logService = require('../services/logService')
 const { EXITOSO, FALLIDO, NO_ENCONTRADO } = require('../constants/logResults')
 
@@ -10,18 +11,20 @@ const { EXITOSO, FALLIDO, NO_ENCONTRADO } = require('../constants/logResults')
  */
 const listar = async (req, res, next) => {
   try {
+    const usuarios = await usuariosService.listar()
+
     await logService.registrarLog({
       usuarioId: req.user?.id || null,
       accion: 'LISTAR_USUARIOS',
-      detalle: `Listado de usuarios consultado por el usuario ${req.user?.nombre || 'desconocido'}`,
+      detalle: `Listado de usuarios consultado por ${req.user?.nombre || 'desconocido'}`,
       ipOrigen: req.ip,
       resultado: EXITOSO
     })
 
     return res.status(200).json({
       ok: true,
-      message: 'Listar usuarios - pendiente implementación',
-      data: []
+      message: 'Listado de usuarios obtenido correctamente',
+      data: usuarios
     })
   } catch (error) {
     await logService.registrarLog({
@@ -45,16 +48,14 @@ const listar = async (req, res, next) => {
  */
 const obtener = async (req, res, next) => {
   try {
-    const params = req.validatedData?.params
-
-    // Temporal hasta conectar BD real
-    const usuario = null
+    const { id } = req.validatedData.params
+    const usuario = await usuariosService.obtenerPorId(id)
 
     if (!usuario) {
       await logService.registrarLog({
         usuarioId: req.user?.id || null,
         accion: 'OBTENER_USUARIO',
-        detalle: `Usuario con id ${params.id} no encontrado`,
+        detalle: `Usuario con id ${id} no encontrado`,
         ipOrigen: req.ip,
         resultado: NO_ENCONTRADO
       })
@@ -68,7 +69,7 @@ const obtener = async (req, res, next) => {
     await logService.registrarLog({
       usuarioId: req.user?.id || null,
       accion: 'OBTENER_USUARIO',
-      detalle: `Consulta del usuario con id ${params.id} por el usuario ${req.user?.nombre || 'desconocido'}`,
+      detalle: `Consulta del usuario con id ${id}`,
       ipOrigen: req.ip,
       resultado: EXITOSO
     })
@@ -92,7 +93,7 @@ const obtener = async (req, res, next) => {
 }
 
 /**
- * Crea un usuario con datos previamente validados.
+ * Crea un usuario nuevo.
  * @param {import('express').Request} req Solicitud HTTP.
  * @param {import('express').Response} res Respuesta HTTP.
  * @param {import('express').NextFunction} next Middleware siguiente.
@@ -100,24 +101,21 @@ const obtener = async (req, res, next) => {
  */
 const crear = async (req, res, next) => {
   try {
-    const data = req.validatedData?.body
+    const data = req.validatedData.body
+    const usuario = await usuariosService.crear(data)
 
     await logService.registrarLog({
       usuarioId: req.user?.id || null,
       accion: 'CREAR_USUARIO',
-      detalle: `Creación del usuario ${data.nombre} con rol ${data.rol} por el usuario ${req.user?.nombre || 'desconocido'}`,
+      detalle: `Creación del usuario ${usuario.nombre} con rol ${usuario.rol}`,
       ipOrigen: req.ip,
       resultado: EXITOSO
     })
 
     return res.status(201).json({
       ok: true,
-      message: 'Crear usuario - pendiente implementación',
-      data: {
-        nombre: data.nombre,
-        email: data.email,
-        rol: data.rol
-      }
+      message: 'Usuario creado correctamente',
+      data: usuario
     })
   } catch (error) {
     await logService.registrarLog({
@@ -128,7 +126,10 @@ const crear = async (req, res, next) => {
       resultado: FALLIDO
     })
 
-    next(error)
+    return res.status(error.statusCode || 500).json({
+      ok: false,
+      message: error.message || 'Error al crear usuario'
+    })
   }
 }
 
@@ -141,17 +142,15 @@ const crear = async (req, res, next) => {
  */
 const actualizar = async (req, res, next) => {
   try {
-    const params = req.validatedData?.params
-    const data = req.validatedData?.body
+    const { id } = req.validatedData.params
+    const data = req.validatedData.body
+    const usuario = await usuariosService.actualizar(id, data)
 
-    // Temporal hasta conectar BD real
-    const usuarioExiste = false
-
-    if (!usuarioExiste) {
+    if (!usuario) {
       await logService.registrarLog({
         usuarioId: req.user?.id || null,
         accion: 'ACTUALIZAR_USUARIO',
-        detalle: `Usuario con id ${params.id} no encontrado para actualización`,
+        detalle: `Usuario con id ${id} no encontrado para actualización`,
         ipOrigen: req.ip,
         resultado: NO_ENCONTRADO
       })
@@ -165,7 +164,7 @@ const actualizar = async (req, res, next) => {
     await logService.registrarLog({
       usuarioId: req.user?.id || null,
       accion: 'ACTUALIZAR_USUARIO',
-      detalle: `Actualización del usuario con id ${params.id} por el usuario ${req.user?.nombre || 'desconocido'}. Cambios: ${JSON.stringify(data)}`,
+      detalle: `Usuario con id ${id} actualizado`,
       ipOrigen: req.ip,
       resultado: EXITOSO
     })
@@ -173,10 +172,7 @@ const actualizar = async (req, res, next) => {
     return res.status(200).json({
       ok: true,
       message: 'Usuario actualizado correctamente',
-      data: {
-        id: params.id,
-        cambios: data
-      }
+      data: usuario
     })
   } catch (error) {
     await logService.registrarLog({
@@ -187,12 +183,15 @@ const actualizar = async (req, res, next) => {
       resultado: FALLIDO
     })
 
-    next(error)
+    return res.status(error.statusCode || 500).json({
+      ok: false,
+      message: error.message || 'Error al actualizar usuario'
+    })
   }
 }
 
 /**
- * Elimina un usuario por su identificador.
+ * Elimina un usuario existente.
  * @param {import('express').Request} req Solicitud HTTP.
  * @param {import('express').Response} res Respuesta HTTP.
  * @param {import('express').NextFunction} next Middleware siguiente.
@@ -200,16 +199,14 @@ const actualizar = async (req, res, next) => {
  */
 const eliminar = async (req, res, next) => {
   try {
-    const params = req.validatedData?.params
+    const { id } = req.validatedData.params
+    const eliminado = await usuariosService.eliminar(id)
 
-    // Temporal hasta conectar BD real
-    const usuarioExiste = false
-
-    if (!usuarioExiste) {
+    if (!eliminado) {
       await logService.registrarLog({
         usuarioId: req.user?.id || null,
         accion: 'ELIMINAR_USUARIO',
-        detalle: `Usuario con id ${params.id} no encontrado para eliminación`,
+        detalle: `Usuario con id ${id} no encontrado para eliminación`,
         ipOrigen: req.ip,
         resultado: NO_ENCONTRADO
       })
@@ -223,17 +220,14 @@ const eliminar = async (req, res, next) => {
     await logService.registrarLog({
       usuarioId: req.user?.id || null,
       accion: 'ELIMINAR_USUARIO',
-      detalle: `Eliminación del usuario con id ${params.id} por el usuario ${req.user?.nombre || 'desconocido'}`,
+      detalle: `Usuario con id ${id} eliminado`,
       ipOrigen: req.ip,
       resultado: EXITOSO
     })
 
     return res.status(200).json({
       ok: true,
-      message: 'Usuario eliminado correctamente',
-      data: {
-        id: params.id
-      }
+      message: 'Usuario eliminado correctamente'
     })
   } catch (error) {
     await logService.registrarLog({

@@ -1,16 +1,21 @@
-const pool = require('../config/db')
 const bcrypt = require('bcrypt')
+const pool = require('../config/db')
 
 /**
- * Busca usuario por nombre y valida contraseña.
- * @param {{ nombre: string, password: string }} credentials
- * @returns {Promise<{ id: number, nombre: string, rol: string }>}
+ * Busca un usuario por nombre, valida su contraseña y devuelve su rol real.
+ * @param {{ nombre: string, password: string }} credentials Credenciales del usuario.
+ * @returns {Promise<{ id: number, nombre: string, rol: string }>} Usuario autenticado.
  */
 const login = async ({ nombre, password }) => {
   const query = `
-    SELECT id, nombre, contrasena, rol
-    FROM usuarios
-    WHERE nombre = $1
+    SELECT
+      u.id,
+      u.nombre,
+      u.contrasena,
+      r.role AS rol
+    FROM usuarios u
+    INNER JOIN roles r ON r.id = u.rol_id
+    WHERE u.nombre = $1
     LIMIT 1
   `
 
