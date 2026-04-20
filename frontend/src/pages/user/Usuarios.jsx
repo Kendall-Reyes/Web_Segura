@@ -16,6 +16,10 @@ export default function Usuarios() {
         .finally(() => setLoading(false));
     }, []);
 
+    const handleDelete = (id) => {
+        setUsers(prev => prev.filter(u => u.id !== id));
+    };
+
     if (loading) return <p className="text-gray-500">Cargando...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
 
@@ -38,7 +42,7 @@ export default function Usuarios() {
             </div>
 
             {/* Tabla */}
-            <UserTable users={users} />
+            <UserTable users={users} onDelete={handleDelete} />
 
         </div>
     );
