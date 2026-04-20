@@ -31,9 +31,9 @@ export default function LoginForm() {
 
         try {
             await axios.post(
-                "/login",
+                "/api/auth/login",
                 data,
-                { withCredentials: true } // 🔐 IMPORTANTE
+                { withCredentials: true } 
             );
 
             // Aquí luego irá context + navegación
