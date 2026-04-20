@@ -1,29 +1,27 @@
-import ProductTable from "../../components/products/ProductTable";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ProductTable from "../../components/products/ProductTable";
+import axios from "../../api/axios";
 
 export default function Productos() {
     const navigate = useNavigate();
+    const [productos, setProductos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // 🔥 Mock data
-    const productos = [
-        {
-            id: 1,
-            codigo: "P001",
-            nombre: "Laptop",
-            descripcion: "Laptop empresarial",
-            cantidad: 10,
-            precio: 750.5,
-        },
-        {
-            id: 2,
-            codigo: "P002",
-            nombre: "Mouse",
-            descripcion: "Mouse inalámbrico",
-            cantidad: 50,
-            precio: 15.99,
-        },
-    ];
+    useEffect(() => {
+        axios.get("/api/productos")
+            .then(data => setProductos(data))
+            .catch(() => setError("Error al cargar productos"))
+            .finally(() => setLoading(false));
+    }, []);
 
+    const handleDelete = (id) => {
+        setProductos(prev => prev.filter(p => p.id !== id));
+    };
+
+    if (loading) return <p className="text-gray-500">Cargando...</p>;
+    if (error) return <p className="text-red-500">{error}</p>;
     return (
         <div>
 
@@ -41,7 +39,7 @@ export default function Productos() {
                 </button>
             </div>
 
-            <ProductTable productos={productos} />
+            <ProductTable productos={productos} onDelete={handleDelete} />
 
         </div>
     );
