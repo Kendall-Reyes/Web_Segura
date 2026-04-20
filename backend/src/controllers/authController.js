@@ -45,13 +45,13 @@ const login = async (req, res, next) => {
     })
 
     return res.status(200).json({
-      ok: true,
-      message: 'Login exitoso',
-      user: {
-        id: user.id,
-        nombre: user.nombre,
-        rol: user.rol
-      }
+        ok: true,
+        message: 'Login exitoso',
+        user: {
+            id: user.id,
+            nombre: user.nombre,
+            rol: user.rol
+        }
     })
   } catch (error) {
     await logService.registrarLog({
