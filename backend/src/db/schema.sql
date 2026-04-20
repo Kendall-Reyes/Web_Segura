@@ -22,7 +22,7 @@ insert into usuarios (nombre, email, contrasena, rol_id)
    values(
       'Jose David Carvajal',
       'jodacarvajal@gmail.com',
-      '$2b$12$RGjazohWwAOLVtOyioWFK.i8DS7IAl7FcuHiijGIq39Urvz7TP6NC', -- Contraseña: 123456
+      '$2b$12$oAqwngeowHzqGpYROhbJoeq.3vW0niTFiypePCB0tbI3IQ/20QeMe', -- Contraseña: 12345678
       (select id from roles where role = 'SuperAdmin')
    )
    on conflict (email) do nothing;
