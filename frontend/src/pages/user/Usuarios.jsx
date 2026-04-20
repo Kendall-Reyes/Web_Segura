@@ -1,26 +1,23 @@
-import UserTable from "../../components/users/UserTable";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import UserTable from "../../components/users/UserTable";
+import axios from "../../api/axios";
 
 export default function Usuarios() {
     const navigate = useNavigate();
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // 🔥 Mock data (luego viene del backend)
-    const users = [
-        {
-            id: 1,
-            nombre: "Admin",
-            email: "admin@test.com",
-            password: "********",
-            rol: "SuperAdmin",
-        },
-        {
-            id: 2,
-            nombre: "Auditor",
-            email: "auditor@test.com",
-            password: "********",
-            rol: "Auditor",
-        },
-    ];
+    useEffect(() => {
+        axios.get("/api/usuarios")
+        .then(data => setUsers(data))
+        .catch(() => setError("Error al cargar usuarios"))
+        .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) return <p className="text-gray-500">Cargando...</p>;
+    if (error) return <p className="text-red-500">{error}</p>;
 
     return (
         <div>
