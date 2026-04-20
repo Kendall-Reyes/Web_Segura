@@ -1,8 +1,10 @@
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { Outlet } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
-export default function DashboardLayout({ user, onRoleChange, children }) {
+export default function DashboardLayout() {
+    const { user } = useAuth();
     return (
         <div className="flex">
 

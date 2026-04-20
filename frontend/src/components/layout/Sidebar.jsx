@@ -1,8 +1,10 @@
 import { menu } from "../../utils/menuConfig";
 import logo from "../../assets/logo.png";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
-export default function Sidebar({ user }) {
+export default function Sidebar() {
+    const { user } = useAuth();
     return (
         <aside className="w-64 h-screen bg-[#1E3A5F] text-white flex flex-col">
 
