@@ -1,10 +1,17 @@
 import { useNavigate } from "react-router-dom";
+import axios from "../../api/axios";
 
-export default function ProductRow({ producto }) {
+export default function ProductRow({ producto, onDelete }) {
     const navigate = useNavigate();
 
-    const handleDelete = () => {
-        console.log("Eliminar producto:", producto.id);
+     const handleDelete = async () => {
+        if (!window.confirm(`¿Estás seguro de eliminar ${producto.nombre}?`)) return;
+        try {
+            await axios.delete(`/api/productos/${producto.id}`);
+            onDelete(producto.id);
+        } catch (error) {
+            console.error("Error al eliminar producto:", error);
+        }
     };
 
     return (
