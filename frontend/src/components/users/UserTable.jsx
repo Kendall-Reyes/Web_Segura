@@ -1,6 +1,6 @@
 import UserRow from "./UserRow";
 
-export default function UserTable({ users }) {
+export default function UserTable({ users, onDelete }) {
     return (
         <div className="bg-white rounded-xl shadow overflow-hidden">
 
@@ -20,7 +20,7 @@ export default function UserTable({ users }) {
                 {/* Body */}
                 <tbody>
                     {users.map((user) => (
-                        <UserRow key={user.id} user={user} />
+                        <UserRow key={user.id} user={user} onDelete={onDelete} />
                     ))}
                 </tbody>
 

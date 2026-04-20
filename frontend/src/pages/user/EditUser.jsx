@@ -1,25 +1,38 @@
-import UserForm from "../../components/users/UserForm";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import UserForm from "../../components/users/UserForm";
+import axios from "../../api/axios";
 
 export default function EditUser() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true); 
 
-    // 🔥 Mock (luego viene del backend)
-    const user = {
-        id,
-        nombre: "Admin",
-        email: "admin@test.com",
-        rol: "SuperAdmin",
-    };
+    useEffect(() => {
+        axios.get(`/api/usuarios/${id}`)
+        .then(data => setUser(data))
+        .catch(err => console.error("Error al cargar usuario:", err))
+        .finally(() => setLoading(false));
+    }, [id]);
 
     const handleUpdate = async (data) => {
-        console.log("Actualizar usuario:", id, data);
+        try {
+            // Extraer solo los campos que el backend acepta
+            const { nombre, email, password, rolId } = data;
+            const payload = { nombre, email, rolId };
+            
+            // Solo incluir password si se llenó
+            if (password) payload.password = password;
 
-        // 🔐 luego: axios PUT
-
-        navigate("/usuarios");
+            await axios.put(`/api/usuarios/${id}`, payload);
+            navigate("/app/usuarios");
+        } catch (error) {
+            console.error("Error al actualizar usuarios", error);
+        }
     };
+
+    if (loading) return <p className="text-gray-500">Cargando...</p>
 
     return (
         <div className="max-w-xl mx-auto">

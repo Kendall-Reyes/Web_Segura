@@ -1,11 +1,18 @@
 import { useNavigate } from "react-router-dom";
+import axios from "../../api/axios";
 
 export default function UserRow({ user }) {
     const navigate = useNavigate();
 
-    const handleDelete = () => {
-        // 🔐 luego: confirmación + llamada API
-        console.log("Eliminar usuario:", user.id);
+    const handleDelete = async () => {
+        if (!window.confirm(`¿Estás seguro de eliminar a ${user.nombre}?`)) return;
+
+        try {
+            await axios.delete(`/api/usuarios/${user.id}`);
+            onDelete(user.id);
+        } catch (error) {
+            console.error("Error al eliminar usuario:", error);
+        }
     };
 
     return (
@@ -13,7 +20,7 @@ export default function UserRow({ user }) {
 
             <td className="px-4 py-3">{user.nombre}</td>
             <td className="px-4 py-3">{user.email}</td>
-            <td className="px-4 py-3">{user.password}</td>
+            <td className="px-4 py-3">********</td>
             <td className="px-4 py-3">{user.rol}</td>
 
             <td className="px-4 py-3 flex gap-2 justify-center">

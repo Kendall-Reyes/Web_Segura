@@ -38,7 +38,7 @@ export default function LoginForm() {
                 { withCredentials: true }
             );
 
-            login(res.data.user);
+            login(res.user);
 
             navigate("/app/usuarios");
 

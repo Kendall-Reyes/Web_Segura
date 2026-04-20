@@ -1,7 +1,11 @@
 import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import Input from "../ui/Input";
+import axios from "../../api/axios";
 
 export default function UserForm({ mode = "create", defaultValues, onSubmit }) {
+    const [roles, setRoles] = useState([]);
+
     const {
         register,
         handleSubmit,
@@ -9,6 +13,12 @@ export default function UserForm({ mode = "create", defaultValues, onSubmit }) {
     } = useForm({
         defaultValues,
     });
+
+    useEffect(() => {
+        axios.get("/api/roles")
+            .then(data => setRoles(data))
+            .catch(err => console.error("Error al cargar roles:", err));
+    }, []);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -35,16 +45,19 @@ export default function UserForm({ mode = "create", defaultValues, onSubmit }) {
                 error={errors.password}
             />
 
-            {/* Select de roles */}
+            {/* Select de roles desde la BD */}
             <div>
                 <label className="block text-sm text-[#64748B] mb-1">Rol</label>
                 <select
-                    {...register("rol")}
+                    {...register("rolId", { valueAsNumber: true })}
                     className="w-full border rounded-lg px-3 py-2"
                 >
-                    <option value="SuperAdmin">SuperAdmin</option>
-                    <option value="Auditor">Auditor</option>
-                    <option value="Registrador">Registrador</option>
+                    <option value="">Seleccionar rol</option>
+                    {roles.map(rol => (
+                        <option key={rol.id} value={rol.id}>
+                            {rol.role}
+                        </option>
+                    ))}
                 </select>
             </div>
 
