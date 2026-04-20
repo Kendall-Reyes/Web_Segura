@@ -20,7 +20,7 @@ export default function UserRow({ user }) {
 
                 {/* Editar */}
                 <button
-                    onClick={() => navigate(`/usuarios/editar/${user.id}`)}
+                    onClick={() => navigate(`/app/usuarios/editar/${user.id}`)}
                     className="bg-[#0EA5E9] text-white px-3 py-1 rounded-md text-xs
                     hover:bg-sky-600 transition"
                 >

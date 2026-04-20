@@ -4,8 +4,10 @@ create table if not exists roles (
    role varchar(50) unique not null
 );
 
--- Insertar el rol superadmin
+-- Insertar los roles
 insert into roles (role) values ('SuperAdmin') on conflict (role) do nothing;
+insert into roles (role) values ('Auditor') on conflict (role) do nothing;
+insert into roles (role) values ('Registrador') on conflict (role) do nothing;
 
 -- Tabla usuarios para docker-compose
 create table if not exists usuarios (

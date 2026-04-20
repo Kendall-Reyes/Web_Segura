@@ -32,13 +32,6 @@ export default function EditProduct() {
                 onSubmit={handleUpdate}
             />
 
-            <button
-                onClick={() => navigate("/productos")}
-                className="mt-4 text-[#64748B]"
-            >
-                ← Volver
-            </button>
-
         </div>
     );
 }

@@ -23,7 +23,7 @@ export default function ProductRow({ producto }) {
             <td className="px-4 py-3 flex gap-2 justify-center">
 
                 <button
-                    onClick={() => navigate(`/productos/editar/${producto.id}`)}
+                    onClick={() => navigate(`/app/productos/editar/${producto.id}`)}
                     className="bg-[#0EA5E9] text-white px-3 py-1 rounded-md text-xs
                     hover:bg-sky-600 transition"
                 >
