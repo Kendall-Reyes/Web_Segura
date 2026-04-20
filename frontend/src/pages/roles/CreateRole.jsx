@@ -1,12 +1,17 @@
-import RoleForm from "../../components/roles/RoleForm";
 import { useNavigate } from "react-router-dom";
+import RoleForm from "../../components/roles/RoleForm";
+import axios from "../../api/axios";
 
 export default function CreateRole() {
     const navigate = useNavigate();
 
-    const handleCreate = (data) => {
-        console.log("Crear rol:", data);
-        navigate("/roles");
+    const handleCreate = async (data) => {
+        try {
+            await axios.post("/api/roles", { role: data.nombre });
+            navigate("/app/roles");
+        } catch (error) {
+            console.error("Error al crear rol:", error);
+        }
     };
 
     return (
@@ -19,7 +24,7 @@ export default function CreateRole() {
             <RoleForm mode="create" onSubmit={handleCreate} />
 
             <button
-                onClick={() => navigate("/roles")}
+                onClick={() => navigate("/app/roles")}
                 className="mt-4 text-[#64748B]"
             >
                 ← Volver
