@@ -43,8 +43,7 @@ create table if not exists productos (
 create table if not exists log_auditoria (
    id         serial primary key,
    timestamp  timestamp default now(),
-   usuario_id integer
-      references usuarios ( id ),
+   usuario_id integer,
    accion     varchar(100) not null,
    detalle    text,
    ip_origen  varchar(45),
