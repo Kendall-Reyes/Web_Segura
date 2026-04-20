@@ -1,12 +1,17 @@
-import ProductForm from "../../components/products/ProductForm";
 import { useNavigate } from "react-router-dom";
+import ProductForm from "../../components/products/ProductForm";
+import axios from "../../api/axios";
 
 export default function CreateProduct() {
     const navigate = useNavigate();
 
-    const handleCreate = (data) => {
-        console.log("Crear producto:", data);
-        navigate("/productos");
+    const handleCreate = async (data) => {
+        try {
+            await axios.post("/api/productos", data);
+            navigate("/app/productos");
+        } catch (error) {
+            console.error("Error al crear producto:", error);
+        }
     };
 
     return (

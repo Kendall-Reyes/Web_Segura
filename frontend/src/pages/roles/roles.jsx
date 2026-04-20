@@ -1,15 +1,27 @@
+import { useEffect, useState } from "react";
 import RoleTable from "../../components/roles/RoleTable";
 import { useNavigate } from "react-router-dom";
+import axios from "../../api/axios";
 
 export default function Roles() {
     const navigate = useNavigate();
+    const [roles, setRoles] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // 🔥 Mock data
-    const roles = [
-        { id: 1, nombre: "SuperAdmin" },
-        { id: 2, nombre: "Auditor" },
-        { id: 3, nombre: "Registrador" },
-    ];
+    useEffect(() => {
+        axios.get("/api/roles")
+            .then(data => setRoles(data))
+            .catch(() => setError("Error al cargar roles"))
+            .finally(() => setLoading(false));
+    }, []);
+
+    const handleDelete = (id) => {
+        setRoles(prev => prev.filter(r => r.id !== id));
+    };
+
+    if (loading) return <p className="text-gray-500">Cargando...</p>;
+    if (error) return <p className="text-red-500">{error}</p>;
 
     return (
         <div>
@@ -29,7 +41,7 @@ export default function Roles() {
                 </button>
             </div>
 
-            <RoleTable roles={roles} />
+            <RoleTable roles={roles} onDelete={handleDelete} />
 
         </div>
     );

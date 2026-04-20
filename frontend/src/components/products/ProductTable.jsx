@@ -1,6 +1,6 @@
 import ProductRow from "./ProductRow";
 
-export default function ProductTable({ productos }) {
+export default function ProductTable({ productos, onDelete }) {
     return (
         <div className="bg-white rounded-xl shadow overflow-hidden">
 
@@ -19,7 +19,7 @@ export default function ProductTable({ productos }) {
 
                 <tbody>
                     {productos.map((p) => (
-                        <ProductRow key={p.id} producto={p} />
+                        <ProductRow key={p.id} producto={p} onDelete={onDelete} />
                     ))}
                 </tbody>
 

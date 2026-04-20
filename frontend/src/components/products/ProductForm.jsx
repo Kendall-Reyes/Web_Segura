@@ -22,11 +22,11 @@ export default function ProductForm({ mode = "create", defaultValues, onSubmit }
             <input {...register("descripcion")} placeholder="Descripción"
                 className="w-full border rounded-lg px-3 py-2" />
 
-            <input type="number" {...register("cantidad")}
+            <input type="number" {...register("cantidad", { valueAsNumber: true })}
                 placeholder="Cantidad"
                 className="w-full border rounded-lg px-3 py-2" />
 
-            <input type="number" step="0.01" {...register("precio")}
+            <input type="number" step="0.01" {...register("precio", { valueAsNumber: true })}
                 placeholder="Precio"
                 className="w-full border rounded-lg px-3 py-2" />
 

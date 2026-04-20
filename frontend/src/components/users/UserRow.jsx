@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import axios from "../../api/axios";
 
-export default function UserRow({ user }) {
+export default function UserRow({ user, onDelete }) {
     const navigate = useNavigate();
 
     const handleDelete = async () => {

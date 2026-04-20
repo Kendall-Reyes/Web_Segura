@@ -1,17 +1,24 @@
 import { useNavigate } from "react-router-dom";
+import axios from "../../api/axios";
 
-export default function RoleRow({ role }) {
+export default function RoleRow({ role, onDelete }) {
     const navigate = useNavigate();
 
-    const handleDelete = () => {
-        console.log("Eliminar rol:", role.id);
+    const handleDelete = async () => {
+        if (!window.confirm(`¿Estás seguro de eliminar el rol ${role.role}?`)) return;
+        try {
+            await axios.delete(`/api/roles/${role.id}`);
+            onDelete(role.id);
+        } catch (error) {
+            console.error("Error al eliminar rol:", error);
+        }
     };
 
     return (
         <tr className="border-b hover:bg-gray-50">
 
             <td className="px-4 py-3 font-medium">
-                {role.nombre}
+                {role.role}
             </td>
 
             <td className="px-4 py-3 flex gap-2 justify-center">
