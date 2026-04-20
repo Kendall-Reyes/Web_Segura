@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
 import ProtectedRoute from "./ProtectedRoute";
@@ -29,18 +29,18 @@ import Logs from "../pages/Logs";
 import NoAutorizado from "../pages/NoAutorizado";
 
 export default function AppRoutes() {
-    const [user, setUser] = useState(null);
+    const { user } = useAuth();
 
     return (
         <BrowserRouter>
             <Routes>
 
                 {/* 🔓 LOGIN */}
-                <Route path="/" element={<AuthPage setUser={setUser} />} />
+                <Route path="/" element={<AuthPage />} />
 
-                {/* 🔐 ZONA PROTEGIDA (LAYOUT GLOBAL) */}
+                {/* 🔐 ZONA PROTEGIDA */}
                 <Route
-                    path="/"
+                    path="/app"
                     element={
                         <ProtectedRoute
                             user={user}
@@ -51,14 +51,9 @@ export default function AppRoutes() {
                     }
                 >
 
-                    {/* ===== DASHBOARD DEFAULT ===== */}
-                    <Route index element={<Navigate to="/usuarios" />} />
+                    <Route index element={<Navigate to="/app/usuarios" />} />
 
-                    {/* ========================= */}
-                    {/* 👤 USUARIOS */}
-                    {/* ========================= */}
-
-                    {/* Lectura: TODOS pueden ver */}
+                    {/* ===== USUARIOS ===== */}
                     <Route
                         path="usuarios"
                         element={
@@ -70,8 +65,6 @@ export default function AppRoutes() {
                             </ProtectedRoute>
                         }
                     />
-
-                    {/* Crear: SOLO SuperAdmin */}
                     <Route
                         path="usuarios/crear"
                         element={
@@ -80,8 +73,6 @@ export default function AppRoutes() {
                             </ProtectedRoute>
                         }
                     />
-
-                    {/* Editar: SOLO SuperAdmin */}
                     <Route
                         path="usuarios/editar/:id"
                         element={
@@ -91,11 +82,7 @@ export default function AppRoutes() {
                         }
                     />
 
-                    {/* ========================= */}
-                    {/* 🔐 ROLES */}
-                    {/* ========================= */}
-
-                    {/* Solo SuperAdmin */}
+                    {/* ===== ROLES ===== */}
                     <Route
                         path="roles"
                         element={
@@ -104,7 +91,6 @@ export default function AppRoutes() {
                             </ProtectedRoute>
                         }
                     />
-
                     <Route
                         path="roles/crear"
                         element={
@@ -113,7 +99,6 @@ export default function AppRoutes() {
                             </ProtectedRoute>
                         }
                     />
-
                     <Route
                         path="roles/editar/:id"
                         element={
@@ -123,11 +108,7 @@ export default function AppRoutes() {
                         }
                     />
 
-                    {/* ========================= */}
-                    {/* 📦 PRODUCTOS */}
-                    {/* ========================= */}
-
-                    {/* Lectura: Auditor + Registrador */}
+                    {/* ===== PRODUCTOS ===== */}
                     <Route
                         path="productos"
                         element={
@@ -139,8 +120,6 @@ export default function AppRoutes() {
                             </ProtectedRoute>
                         }
                     />
-
-                    {/* CRUD: SOLO Registrador */}
                     <Route
                         path="productos/crear"
                         element={
@@ -149,7 +128,6 @@ export default function AppRoutes() {
                             </ProtectedRoute>
                         }
                     />
-
                     <Route
                         path="productos/editar/:id"
                         element={
@@ -159,11 +137,7 @@ export default function AppRoutes() {
                         }
                     />
 
-                    {/* ========================= */}
-                    {/* 📜 LOGS */}
-                    {/* ========================= */}
-
-                    {/* Solo SuperAdmin */}
+                    {/* ===== LOGS ===== */}
                     <Route
                         path="logs"
                         element={
@@ -178,7 +152,7 @@ export default function AppRoutes() {
                 {/* 🚫 NO AUTORIZADO */}
                 <Route path="/no-autorizado" element={<NoAutorizado />} />
 
-                {/* 🔄 CUALQUIER RUTA DESCONOCIDA */}
+                {/* 🔄 RUTA DESCONOCIDA */}
                 <Route path="*" element={<Navigate to="/" />} />
 
             </Routes>

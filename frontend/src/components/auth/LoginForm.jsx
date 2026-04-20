@@ -38,18 +38,9 @@ export default function LoginForm() {
                 { withCredentials: true }
             );
 
-            // 🔥 VALIDACIÓN IMPORTANTE (evita crashes)
-            if (!res.data?.user) {
-                throw new Error("Respuesta inválida del servidor");
-            }
+            login(res.data.user);
 
-            const user = res.data.user;
-
-            // 🔐 Guardar usuario en contexto
-            login(user);
-
-            // 🚀 Redirigir
-            navigate("/usuarios");
+            navigate("/app/usuarios");
 
         } catch (error) {
             console.error("Error login:", error);

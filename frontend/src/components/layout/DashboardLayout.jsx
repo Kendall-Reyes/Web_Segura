@@ -11,7 +11,7 @@ export default function DashboardLayout() {
             <Sidebar user={user} />
 
             <div className="flex-1 bg-gray-50 min-h-screen">
-                <Header user={user} onRoleChange={onRoleChange} />
+                <Header user={user} />
 
                 <main className="p-6">
                     <Outlet />
