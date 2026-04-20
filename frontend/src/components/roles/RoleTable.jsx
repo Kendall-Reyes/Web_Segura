@@ -1,6 +1,6 @@
 import RoleRow from "./RoleRow";
 
-export default function RoleTable({ roles }) {
+export default function RoleTable({ roles, onDelete }) {
     return (
         <div className="bg-white rounded-xl shadow overflow-hidden">
 
@@ -15,7 +15,7 @@ export default function RoleTable({ roles }) {
 
                 <tbody>
                     {roles.map((role) => (
-                        <RoleRow key={role.id} role={role} />
+                        <RoleRow key={role.id} role={role} onDelete={onDelete} />
                     ))}
                 </tbody>
 
