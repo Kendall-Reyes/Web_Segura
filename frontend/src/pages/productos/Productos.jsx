@@ -33,7 +33,7 @@ export default function Productos() {
                 </h1>
 
                 <button
-                    onClick={() => navigate("/productos/crear")}
+                    onClick={() => navigate("/app/productos/crear")}
                     className="bg-[#0EA5E9] text-white px-4 py-2 rounded-lg
                     hover:bg-sky-600 transition"
                 >

@@ -1,4 +1,4 @@
-//import UserForm from "../components/users/UserForm";
+import UserForm from "../../components/users/UserForm";
 import { useNavigate } from "react-router-dom";
 
 export default function CreateUser() {
@@ -9,7 +9,7 @@ export default function CreateUser() {
 
         // 🔐 luego: axios POST
 
-        navigate("/usuarios");
+        navigate("/app/usuarios");
     };
 
     return (

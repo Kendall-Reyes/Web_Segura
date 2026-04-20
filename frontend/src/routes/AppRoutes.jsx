@@ -43,7 +43,6 @@ export default function AppRoutes() {
                     path="/app"
                     element={
                         <ProtectedRoute
-                            user={user}
                             rolesPermitidos={["SuperAdmin", "Auditor", "Registrador"]}
                         >
                             <DashboardLayout user={user} />
@@ -58,7 +57,6 @@ export default function AppRoutes() {
                         path="usuarios"
                         element={
                             <ProtectedRoute
-                                user={user}
                                 rolesPermitidos={["SuperAdmin", "Auditor", "Registrador"]}
                             >
                                 <Usuarios />
@@ -68,7 +66,7 @@ export default function AppRoutes() {
                     <Route
                         path="usuarios/crear"
                         element={
-                            <ProtectedRoute user={user} rolesPermitidos={["SuperAdmin"]}>
+                            <ProtectedRoute rolesPermitidos={["SuperAdmin"]}>
                                 <CreateUser />
                             </ProtectedRoute>
                         }
@@ -76,7 +74,7 @@ export default function AppRoutes() {
                     <Route
                         path="usuarios/editar/:id"
                         element={
-                            <ProtectedRoute user={user} rolesPermitidos={["SuperAdmin"]}>
+                            <ProtectedRoute rolesPermitidos={["SuperAdmin"]}>
                                 <EditUser />
                             </ProtectedRoute>
                         }
@@ -86,7 +84,7 @@ export default function AppRoutes() {
                     <Route
                         path="roles"
                         element={
-                            <ProtectedRoute user={user} rolesPermitidos={["SuperAdmin"]}>
+                            <ProtectedRoute rolesPermitidos={["SuperAdmin"]}>
                                 <Roles />
                             </ProtectedRoute>
                         }
@@ -94,7 +92,7 @@ export default function AppRoutes() {
                     <Route
                         path="roles/crear"
                         element={
-                            <ProtectedRoute user={user} rolesPermitidos={["SuperAdmin"]}>
+                            <ProtectedRoute rolesPermitidos={["SuperAdmin"]}>
                                 <CreateRole />
                             </ProtectedRoute>
                         }
@@ -102,7 +100,7 @@ export default function AppRoutes() {
                     <Route
                         path="roles/editar/:id"
                         element={
-                            <ProtectedRoute user={user} rolesPermitidos={["SuperAdmin"]}>
+                            <ProtectedRoute rolesPermitidos={["SuperAdmin"]}>
                                 <EditRole />
                             </ProtectedRoute>
                         }
@@ -113,7 +111,6 @@ export default function AppRoutes() {
                         path="productos"
                         element={
                             <ProtectedRoute
-                                user={user}
                                 rolesPermitidos={["Auditor", "Registrador"]}
                             >
                                 <Productos />
@@ -123,7 +120,7 @@ export default function AppRoutes() {
                     <Route
                         path="productos/crear"
                         element={
-                            <ProtectedRoute user={user} rolesPermitidos={["Registrador"]}>
+                            <ProtectedRoute rolesPermitidos={["Registrador"]}>
                                 <CreateProducto />
                             </ProtectedRoute>
                         }
@@ -131,7 +128,7 @@ export default function AppRoutes() {
                     <Route
                         path="productos/editar/:id"
                         element={
-                            <ProtectedRoute user={user} rolesPermitidos={["Registrador"]}>
+                            <ProtectedRoute rolesPermitidos={["Registrador"]}>
                                 <EditProducto />
                             </ProtectedRoute>
                         }
@@ -141,7 +138,7 @@ export default function AppRoutes() {
                     <Route
                         path="logs"
                         element={
-                            <ProtectedRoute user={user} rolesPermitidos={["SuperAdmin"]}>
+                            <ProtectedRoute rolesPermitidos={["SuperAdmin"]}>
                                 <Logs />
                             </ProtectedRoute>
                         }

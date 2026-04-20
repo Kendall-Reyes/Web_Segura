@@ -1,27 +1,22 @@
 export const menu = [
     {
         label: "Usuarios",
-        path: "/usuarios",
+        path: "/app/usuarios",
         roles: ["SuperAdmin", "Auditor", "Registrador"],
     },
     {
         label: "Roles",
-        path: "/roles",
+        path: "/app/roles",
         roles: ["SuperAdmin"],
     },
     {
         label: "Productos",
-        path: "/productos",
+        path: "/app/productos",
         roles: ["Registrador", "Auditor"],
     },
     {
         label: "Logs",
-        path: "/logs",
-        roles: ["SuperAdmin"],
-    },
-    {
-        label: "Reportes",
-        path: "/reportes",
+        path: "/app/logs",
         roles: ["SuperAdmin"],
     },
 ];

@@ -28,13 +28,6 @@ export default function EditRole() {
                 onSubmit={handleUpdate}
             />
 
-            <button
-                onClick={() => navigate("/roles")}
-                className="mt-4 text-[#64748B]"
-            >
-                ← Volver
-            </button>
-
         </div>
     );
 }

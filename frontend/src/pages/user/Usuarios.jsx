@@ -32,7 +32,7 @@ export default function Usuarios() {
                 </h1>
 
                 <button
-                    onClick={() => navigate("/usuarios/crear")}
+                    onClick={() => navigate("/app/usuarios/crear")}
                     className="bg-[#0EA5E9] text-white px-4 py-2 rounded-lg font-medium
                     hover:bg-sky-600 transition"
                 >
