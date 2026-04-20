@@ -170,3 +170,22 @@ Instrucciones para construir el contenedor Docker del backend. Permite que el se
 - backend
 1. npm install
 2. npm run dev
+
+## Guía de ejecución con Docker
+1. Para eliminar alguna BD existente:
+```bash
+docker compose down -v
+```
+2. Para construir los contenedores (Backend, Frontend, Base de Datos):
+```bash
+docker compose up --build
+```
+3. Para apagar los contenedores:
+```bash
+docker compose down
+```
+4. Para levantar los contenedores:
+```bash
+docker compose up
+```
+
