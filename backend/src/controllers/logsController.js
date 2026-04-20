@@ -10,9 +10,18 @@ const pool = require('../config/db')
 const listarLogs = async (req, res, next) => {
   try {
     const query = `
-      SELECT id, timestamp, usuario_id, accion, detalle, ip_origen, resultado
-      FROM log_auditoria
-      ORDER BY timestamp DESC
+      SELECT 
+        l.id,
+        l.timestamp,
+        l.usuario_id,
+        u.nombre AS usuario,
+        l.accion,
+        l.detalle,
+        l.ip_origen,
+        l.resultado
+      FROM log_auditoria l
+      LEFT JOIN usuarios u ON l.usuario_id = u.id
+      ORDER BY l.timestamp DESC
       LIMIT 100
     `
 
