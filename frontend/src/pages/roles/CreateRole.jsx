@@ -1,4 +1,4 @@
-import RoleForm from "../components/roles/RoleForm";
+import RoleForm from "../../components/roles/RoleForm";
 import { useNavigate } from "react-router-dom";
 
 export default function CreateRole() {
