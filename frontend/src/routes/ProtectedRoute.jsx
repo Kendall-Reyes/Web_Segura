@@ -1,17 +1,19 @@
 import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-export default function ProtectedRoute({ user, rolesPermitidos, children }) {
+export default function ProtectedRoute({ rolesPermitidos, children }) {
+
+    const { user } = useAuth();
 
     // No autenticado
     if (!user) {
         return <Navigate to="/" replace />;
     }
 
-    // No tiene permiso
+    // No autorizado
     if (!rolesPermitidos.includes(user.rol)) {
         return <Navigate to="/no-autorizado" replace />;
     }
 
-    // Si tiene acceso, renderizamos el contenido protegido
     return children;
 }

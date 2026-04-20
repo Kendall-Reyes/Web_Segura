@@ -1,4 +1,6 @@
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import { useState } from "react";
 import Alert from "../ui/Alert";
 import Input from "../ui/Input";
@@ -6,16 +8,16 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "../../api/axios";
 
-// Esquema de validación con Zod para el login
+// Esquema de validación con Zod
 const schema = z.object({
     email: z.string().email("Correo inválido"),
     password: z.string().min(8, "Mínimo 8 caracteres"),
 });
 
-// Componente de formulario de login con validación y manejo de errores
 export default function LoginForm() {
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
-    // Estado DEBE ir dentro del componente
     const [errorMsg, setErrorMsg] = useState(null);
 
     const {
@@ -30,23 +32,41 @@ export default function LoginForm() {
         setErrorMsg(null);
 
         try {
-            await axios.post(
+            const res = await axios.post(
                 "/api/auth/login",
                 data,
-                { withCredentials: true } 
+                { withCredentials: true }
             );
 
-            // Aquí luego irá context + navegación
+            // 🔥 VALIDACIÓN IMPORTANTE (evita crashes)
+            if (!res.data?.user) {
+                throw new Error("Respuesta inválida del servidor");
+            }
+
+            const user = res.data.user;
+
+            // 🔐 Guardar usuario en contexto
+            login(user);
+
+            // 🚀 Redirigir
+            navigate("/usuarios");
 
         } catch (error) {
-            setErrorMsg("Credenciales inválidas");
+            console.error("Error login:", error);
+
+            // Manejo más realista
+            if (error.response?.status === 401) {
+                setErrorMsg("Credenciales inválidas");
+            } else {
+                setErrorMsg("Error del servidor. Intente nuevamente.");
+            }
         }
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
 
-            {/* ✅ ALERTA */}
+            {/* 🔴 ALERTA */}
             {errorMsg && <Alert type="error" message={errorMsg} />}
 
             <Input

@@ -2,7 +2,7 @@ export const menu = [
     {
         label: "Usuarios",
         path: "/usuarios",
-        roles: ["SuperAdmin", "Auditor"],
+        roles: ["SuperAdmin", "Auditor", "Registrador"],
     },
     {
         label: "Roles",
