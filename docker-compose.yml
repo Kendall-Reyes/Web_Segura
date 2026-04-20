@@ -17,6 +17,11 @@ services:
       - postgres_data:/var/lib/postgresql/data 
         #Le indica a docker que ejecute automáticamente el "schema.sql"
       - ./backend/src/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   backend:
     # Docker construye el backend usando el "DockerFile"
@@ -33,7 +38,8 @@ services:
       - ./backend/.env
     # El backend depende de la BD
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   frontend:
     # Docker construye el frontend usando el "DockerFile"
