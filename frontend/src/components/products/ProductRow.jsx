@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import axios from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ProductRow({ producto, onDelete }) {
     const navigate = useNavigate();
+    const { user: currentUser } = useAuth();
 
-     const handleDelete = async () => {
+    const handleDelete = async () => {
         if (!window.confirm(`¿Estás seguro de eliminar ${producto.nombre}?`)) return;
         try {
             await axios.delete(`/api/productos/${producto.id}`);
@@ -28,23 +30,26 @@ export default function ProductRow({ producto, onDelete }) {
             </td>
 
             <td className="px-4 py-3 flex gap-2 justify-center">
+                {/* 🔐 SOLO SuperAdmin puede ver acciones */}
+                {currentUser?.rol === "Registrador" && (
+                    <>
+                        <button
+                                onClick={() => navigate(`/app/productos/editar/${producto.id}`)}
+                                className="bg-[#0EA5E9] text-white px-3 py-1 rounded-md text-xs
+                                hover:bg-sky-600 transition"
+                                >
+                            Editar
+                        </button>
 
-                <button
-                    onClick={() => navigate(`/app/productos/editar/${producto.id}`)}
-                    className="bg-[#0EA5E9] text-white px-3 py-1 rounded-md text-xs
-                    hover:bg-sky-600 transition"
-                >
-                    Editar
-                </button>
-
-                <button
-                    onClick={handleDelete}
-                    className="bg-[#DC2626] text-white px-3 py-1 rounded-md text-xs
-                    hover:bg-red-700 transition"
-                >
-                    Eliminar
-                </button>
-
+                        <button
+                            onClick={handleDelete}
+                            className="bg-[#DC2626] text-white px-3 py-1 rounded-md text-xs
+                            hover:bg-red-700 transition"
+                        >
+                            Eliminar
+                        </button>
+                    </>
+                )}
             </td>
 
         </tr>

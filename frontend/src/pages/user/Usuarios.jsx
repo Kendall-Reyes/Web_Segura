@@ -2,18 +2,21 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserTable from "../../components/users/UserTable";
 import axios from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Usuarios() {
     const navigate = useNavigate();
+    const { user } = useAuth();
+
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         axios.get("/api/usuarios")
-        .then(data => setUsers(data))
-        .catch(() => setError("Error al cargar usuarios"))
-        .finally(() => setLoading(false));
+            .then(data => setUsers(data))
+            .catch(() => setError("Error al cargar usuarios"))
+            .finally(() => setLoading(false));
     }, []);
 
     const handleDelete = (id) => {
@@ -32,13 +35,16 @@ export default function Usuarios() {
                     Gestión de Usuarios
                 </h1>
 
-                <button
-                    onClick={() => navigate("/app/usuarios/crear")}
-                    className="bg-[#0EA5E9] text-white px-4 py-2 rounded-lg font-medium
-                    hover:bg-sky-600 transition"
-                >
-                    + Crear Usuario
-                </button>
+                {/* 🔐 SOLO SuperAdmin puede crear */}
+                {user?.rol === "SuperAdmin" && (
+                    <button
+                        onClick={() => navigate("/app/usuarios/crear")}
+                        className="bg-[#0EA5E9] text-white px-4 py-2 rounded-lg font-medium
+                        hover:bg-sky-600 transition"
+                    >
+                        + Crear Usuario
+                    </button>
+                )}
             </div>
 
             {/* Tabla */}
