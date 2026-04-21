@@ -189,3 +189,68 @@ docker compose down
 docker compose up
 ```
 
+## Guía de uso de Swagger
+
+1. Levantar el backend (si no está corriendo):
+```bash
+docker compose up
+```
+
+2. Acceder a la documentación Swagger desde el navegador:
+```
+http://localhost:3000/api-docs
+```
+
+3. Explorar los endpoints disponibles:
+- Auth
+- Usuarios
+- Productos
+- Roles
+- Logs
+
+4. Probar un endpoint:
+- Selecciona el endpoint
+- Presiona **“Try it out”**
+- Completa los datos (si aplica)
+- Presiona **“Execute”**
+
+5. Autenticarse con JWT (para endpoints protegidos):
+- Presiona el botón **“Authorize”** (arriba a la derecha)
+- Ingresa el token en formato:
+```
+Bearer TU_TOKEN
+```
+- Presiona **“Authorize”**
+
+6. Ejecutar endpoints protegidos:
+- Una vez autenticado, puedes probar rutas como:
+  - `/api/productos`
+  - `/api/usuarios`
+  - `/api/roles`
+  - `/api/logs`
+
+7. Revisar la respuesta:
+Swagger mostrará:
+- código de estado HTTP
+- request enviado
+- response del servidor
+
+---
+
+## ⚠️ Notas importantes
+
+- Swagger ejecuta **peticiones reales** al backend (no simulaciones)
+- Si el login usa cookies HttpOnly, Swagger puede no mantener la sesión correctamente
+- Para pruebas más completas, se recomienda usar JWT manual (Bearer Token)
+
+---
+
+## 🧾 Ejemplo de login en Swagger
+
+```json
+{
+  "email": "jodacarvajal@gmail.com",
+  "password": "12345678"
+}
+```
+
