@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductTable from "../../components/products/ProductTable";
 import axios from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Productos() {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [productos, setProductos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -29,14 +31,17 @@ export default function Productos() {
                 <h1 className="text-2xl font-bold text-[#0F172A]">
                     Gestión de Productos
                 </h1>
+                {/* 🔐 SOLO Registrador puede crear */}
+                {user?.rol === "Registrador" && (
+                    <button
+                        onClick={() => navigate("/app/productos/crear")}
+                        className="bg-[#0EA5E9] text-white px-4 py-2 rounded-lg
+                        hover:bg-sky-600 transition"
+                    >
+                        + Crear Producto
+                    </button>
+                )}
 
-                <button
-                    onClick={() => navigate("/app/productos/crear")}
-                    className="bg-[#0EA5E9] text-white px-4 py-2 rounded-lg
-                    hover:bg-sky-600 transition"
-                >
-                    + Crear Producto
-                </button>
             </div>
 
             <ProductTable productos={productos} onDelete={handleDelete} />
