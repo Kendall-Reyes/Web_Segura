@@ -1,0 +1,684 @@
+openapi: 3.0.3
+info:
+  title: API Proyecto 2 - Aplicación Web Segura
+  version: 1.0.0
+  description: >
+    Documentación de la API REST del backend del Proyecto 2.
+    Incluye autenticación, usuarios, productos, roles y logs.
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor local
+
+tags:
+  - name: Auth
+  - name: Usuarios
+  - name: Productos
+  - name: Roles
+  - name: Logs
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Credenciales inválidas
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Datos de entrada inválidos
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: email
+              message:
+                type: string
+                example: El email no es válido
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: jodacarvajal@gmail.com
+        password:
+          type: string
+          format: password
+          example: "12345678"
+
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Jose David Carvajal
+        email:
+          type: string
+          format: email
+          example: jodacarvajal@gmail.com
+        rol:
+          type: string
+          example: SuperAdmin
+        ultimo_login:
+          type: string
+          format: date-time
+          nullable: true
+        rolId:
+          type: integer
+          example: 1
+
+    CreateUsuarioRequest:
+      type: object
+      required:
+        - nombre
+        - email
+        - password
+        - rolId
+      properties:
+        nombre:
+          type: string
+          example: Admin Prueba
+        email:
+          type: string
+          format: email
+          example: adminprueba@test.com
+        password:
+          type: string
+          format: password
+          example: "12345678"
+        rolId:
+          type: integer
+          example: 1
+
+    UpdateUsuarioRequest:
+      type: object
+      properties:
+        nombre:
+          type: string
+          example: Admin Editado
+        email:
+          type: string
+          format: email
+          example: admineditado@test.com
+        password:
+          type: string
+          format: password
+          example: "12345678"
+        rolId:
+          type: integer
+          example: 2
+
+    Producto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        codigo:
+          type: string
+          example: P001
+        nombre:
+          type: string
+          example: Teclado mecánico
+        descripcion:
+          type: string
+          nullable: true
+          example: Teclado RGB
+        cantidad:
+          type: integer
+          example: 10
+        precio:
+          type: number
+          format: float
+          example: 25000
+
+    CreateProductoRequest:
+      type: object
+      required:
+        - codigo
+        - nombre
+        - cantidad
+        - precio
+      properties:
+        codigo:
+          type: string
+          example: P001
+        nombre:
+          type: string
+          example: Teclado mecánico
+        descripcion:
+          type: string
+          example: Teclado RGB
+        cantidad:
+          type: integer
+          example: 10
+        precio:
+          type: number
+          format: float
+          example: 25000
+
+    UpdateProductoRequest:
+      type: object
+      properties:
+        codigo:
+          type: string
+          example: P001-EDIT
+        nombre:
+          type: string
+          example: Teclado mecánico PRO
+        descripcion:
+          type: string
+          example: Teclado RGB actualizado
+        cantidad:
+          type: integer
+          example: 15
+        precio:
+          type: number
+          format: float
+          example: 30000
+
+    Rol:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        role:
+          type: string
+          example: SuperAdmin
+
+    CreateRolRequest:
+      type: object
+      required:
+        - role
+      properties:
+        role:
+          type: string
+          example: Auditor
+
+    UpdateRolRequest:
+      type: object
+      properties:
+        role:
+          type: string
+          example: Registrador
+
+    LogItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 31
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-04-19T01:24:01.765Z"
+        usuario_id:
+          type: integer
+          nullable: true
+          example: 1
+        accion:
+          type: string
+          example: LISTAR_USUARIOS
+        detalle:
+          type: string
+          example: Listado de usuarios consultado por admin01
+        ip_origen:
+          type: string
+          example: "::1"
+        resultado:
+          type: string
+          example: EXITOSO
+
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Iniciar sesión
+      description: >
+        Autentica al usuario por correo y contraseña.
+        El backend genera una cookie HttpOnly con el JWT.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              example:
+                ok: true
+                message: Login exitoso
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Cerrar sesión
+      responses:
+        '200':
+          description: Logout exitoso
+          content:
+            application/json:
+              example:
+                ok: true
+                message: Logout exitoso
+
+  /api/logs:
+    get:
+      tags:
+        - Logs
+      summary: Listar logs
+      description: Solo accesible por SuperAdmin.
+      responses:
+        '200':
+          description: Logs obtenidos correctamente
+          content:
+            application/json:
+              example:
+                ok: true
+                message: Listado de logs obtenido correctamente
+                data:
+                  - id: 31
+                    timestamp: "2026-04-19T01:24:01.765Z"
+                    usuario_id: 1
+                    accion: LISTAR_USUARIOS
+                    detalle: Listado de usuarios consultado por admin01
+                    ip_origen: "::1"
+                    resultado: EXITOSO
+        '401':
+          description: No autorizado
+        '403':
+          description: Acceso denegado
+
+  /api/productos:
+    get:
+      tags:
+        - Productos
+      summary: Listar productos
+      description: Acceso según tu RBAC actual para Auditor y Registrador.
+      responses:
+        '200':
+          description: Productos obtenidos correctamente
+          content:
+            application/json:
+              example:
+                ok: true
+                message: Listado de productos obtenido correctamente
+                data:
+                  - id: 1
+                    codigo: P001
+                    nombre: Teclado mecánico
+                    descripcion: Teclado RGB
+                    cantidad: 10
+                    precio: 25000
+        '401':
+          description: No autorizado
+        '403':
+          description: Acceso denegado
+
+    post:
+      tags:
+        - Productos
+      summary: Crear producto
+      description: Acceso según tu RBAC actual para Registrador.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductoRequest'
+      responses:
+        '201':
+          description: Producto creado correctamente
+          content:
+            application/json:
+              example:
+                ok: true
+                message: Producto creado correctamente
+                data:
+                  id: 1
+                  codigo: P001
+                  nombre: Teclado mecánico
+                  descripcion: Teclado RGB
+                  cantidad: 10
+                  precio: 25000
+        '400':
+          description: Datos inválidos
+        '409':
+          description: Código duplicado
+
+  /api/productos/{id}:
+    get:
+      tags:
+        - Productos
+      summary: Obtener producto por id
+      description: Acceso según tu RBAC actual para Registrador.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Producto obtenido correctamente
+          content:
+            application/json:
+              example:
+                ok: true
+                message: Producto obtenido correctamente
+                data:
+                  id: 1
+                  codigo: P001
+                  nombre: Teclado mecánico
+                  descripcion: Teclado RGB
+                  cantidad: 10
+                  precio: 25000
+        '404':
+          description: Producto no encontrado
+
+    put:
+      tags:
+        - Productos
+      summary: Actualizar producto
+      description: Acceso según tu RBAC actual para Registrador.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductoRequest'
+      responses:
+        '200':
+          description: Producto actualizado correctamente
+        '404':
+          description: Producto no encontrado
+        '409':
+          description: Código duplicado
+
+    delete:
+      tags:
+        - Productos
+      summary: Eliminar producto
+      description: Acceso según tu RBAC actual para Registrador.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Producto eliminado correctamente
+        '404':
+          description: Producto no encontrado
+
+  /api/roles:
+    get:
+      tags:
+        - Roles
+      summary: Listar roles
+      description: Solo accesible por SuperAdmin.
+      responses:
+        '200':
+          description: Roles obtenidos correctamente
+          content:
+            application/json:
+              example:
+                ok: true
+                message: Listado de roles obtenido correctamente
+                data:
+                  - id: 1
+                    role: SuperAdmin
+                  - id: 2
+                    role: Auditor
+                  - id: 3
+                    role: Registrador
+        '401':
+          description: No autorizado
+        '403':
+          description: Acceso denegado
+
+    post:
+      tags:
+        - Roles
+      summary: Crear rol
+      description: Solo accesible por SuperAdmin.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRolRequest'
+      responses:
+        '201':
+          description: Rol creado correctamente
+        '409':
+          description: Rol duplicado
+
+  /api/roles/{id}:
+    get:
+      tags:
+        - Roles
+      summary: Obtener rol por id
+      description: Solo accesible por SuperAdmin.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Rol obtenido correctamente
+        '404':
+          description: Rol no encontrado
+
+    put:
+      tags:
+        - Roles
+      summary: Actualizar rol
+      description: Solo accesible por SuperAdmin.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRolRequest'
+      responses:
+        '200':
+          description: Rol actualizado correctamente
+        '404':
+          description: Rol no encontrado
+        '409':
+          description: Rol duplicado
+
+    delete:
+      tags:
+        - Roles
+      summary: Eliminar rol
+      description: Solo accesible por SuperAdmin.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Rol eliminado correctamente
+        '404':
+          description: Rol no encontrado
+        '409':
+          description: Rol en uso
+
+  /api/usuarios:
+    get:
+      tags:
+        - Usuarios
+      summary: Listar usuarios
+      description: Accesible por SuperAdmin, Auditor y Registrador.
+      responses:
+        '200':
+          description: Usuarios obtenidos correctamente
+          content:
+            application/json:
+              example:
+                ok: true
+                message: Listado de usuarios obtenido correctamente
+                data:
+                  - id: 1
+                    nombre: Jose David Carvajal
+                    email: jodacarvajal@gmail.com
+                    rol: SuperAdmin
+                    ultimo_login: null
+                    rolId: 1
+        '401':
+          description: No autorizado
+        '403':
+          description: Acceso denegado
+
+    post:
+      tags:
+        - Usuarios
+      summary: Crear usuario
+      description: Solo accesible por SuperAdmin.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUsuarioRequest'
+      responses:
+        '201':
+          description: Usuario creado correctamente
+        '400':
+          description: Rol inválido
+        '409':
+          description: Email duplicado
+
+  /api/usuarios/{id}:
+    get:
+      tags:
+        - Usuarios
+      summary: Obtener usuario por id
+      description: Solo accesible por SuperAdmin.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Usuario obtenido correctamente
+        '404':
+          description: Usuario no encontrado
+
+    put:
+      tags:
+        - Usuarios
+      summary: Actualizar usuario
+      description: Solo accesible por SuperAdmin.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUsuarioRequest'
+      responses:
+        '200':
+          description: Usuario actualizado correctamente
+        '404':
+          description: Usuario no encontrado
+        '409':
+          description: Email duplicado
+
+    delete:
+      tags:
+        - Usuarios
+      summary: Eliminar usuario
+      description: Solo accesible por SuperAdmin.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Usuario eliminado correctamente
+        '404':
+          description: Usuario no encontrado
